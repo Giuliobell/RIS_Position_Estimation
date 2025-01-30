@@ -218,5 +218,5 @@ print("Angoli di Arrivo (AoA) stimati:", Theta_G_Ext)
 print("Angoli di Partenza (AoD) stimati:", Phi_F_Ext)
 
 
-print("Angoli stimati finali:", final_internal_angles)
+print("Angoli stimati finali:", np.radians(final_internal_angles))
 #print("Configurazioni RIS finali:", ris_configs)
