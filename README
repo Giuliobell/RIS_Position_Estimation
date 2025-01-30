@@ -1,0 +1,10 @@
+Utilizzare VENV in PS
+
+Set-ExecutionPolicy Unrestricted -Scope Process
+.\venv_tesi\Scripts\Activate.ps1
+NOTA: Da fare in un terminale con permessi di amministratore
+
+
+Per usare matlab in python
+cd "matlabroot/extern/engines/python"
+python setup.py install
