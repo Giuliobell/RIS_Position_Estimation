@@ -165,9 +165,6 @@ print("***PERFORM STEP 6***")
 Phi_F_Ext, pow_Phi_F_Ext = eng.rootmusic(R_Phi_F_SS, 1, nargout=2)
 eng.quit()
 
-print(Theta_G_Ext)
-print(Phi_F_Ext)
-
 #Stima angoli interni implementata con algoritmo CEARC
 print("***PERFORM STEP 7***")
 
@@ -210,7 +207,16 @@ for iteration in range(max_iterations):
     # Aggiorna gli angoli precedenti
     previous_angles = estimated_angles
 
+
+reshaped_angles = np.array(estimated_angles).reshape(-1, num_configs)
+final_internal_angles = reshaped_angles[-1]
+
 # Risultati finali
 print("*** RISULTATI FINALI ***")
-print("Angoli stimati finali:", estimated_angles)
+
+print("Angoli di Arrivo (AoA) stimati:", Theta_G_Ext)
+print("Angoli di Partenza (AoD) stimati:", Phi_F_Ext)
+
+
+print("Angoli stimati finali:", final_internal_angles)
 #print("Configurazioni RIS finali:", ris_configs)
