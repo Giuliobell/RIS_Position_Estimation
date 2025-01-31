@@ -1,8 +1,7 @@
+#NOTE: Metti verifica che i parametri forniti in input rispettino tutti i vincoli richiesti senno lancia eccezzioni custom
+
 import numpy as np
 import matlab.engine as mtlab
-
-np.set_printoptions(threshold=np.inf)
-np.set_printoptions(linewidth=np.inf)
 
 class InvalidArgumentLength(Exception):
     def __init__(self, message):
@@ -18,7 +17,7 @@ L= 1      #Numero di percorsi usati (L tra UE -> RIS = L tra RIS -> BS)
 #*********CAPISCI COME FUNZIONANO GLI ANGOLI************
 Theta_G = [0.9273]
 Phi_G = [0.6435]
-Theta_F = [(3/2*np.pi)+1.1071]
+Theta_F = [1.1071]
 Phi_F = [0.4636]
 
 distance_BS_RIS = 50
@@ -142,7 +141,7 @@ H_0 = np.linalg.inv(X_R.conj().T) @ C_0 @ np.linalg.inv(X_T)
 
 #Perform step 3
 print("***PERFORM STEP 3***")
-R_Theta_G = (1/M)*H_0*H_0.conj().T           #ubbio su 1/K
+R_Theta_G = (1/M)*H_0*H_0.conj().T           #Dubbio su 1/K
 J = np.fliplr(np.identity(M-L))
 R_Theta_G_SS = calculate_R_SS(R_Theta_G, J, L+1, M-L)
 
@@ -176,16 +175,17 @@ print("***PERFORM STEP 7***")
 # Parametri iterativi
 max_iterations = 10
 tolerance = 1e-3
-num_configs = 5
+num_configs = 1
 
 
 # Inizializza configurazioni RIS
 ris_configs = generate_ris_configurations(N, num_configs)
+print(ris_configs)
 
 # Processo iterativo
 previous_angles = None
 for iteration in range(max_iterations):
-    print(f"*** ITERAZIONE {iteration + 1} ***")
+    #print(f"*** ITERAZIONE {iteration + 1} ***")
 
     # Step 1: Calcolo delle osservazioni
     observations = compute_observations(H_0, ris_configs, X_T, X_R)
@@ -196,9 +196,9 @@ for iteration in range(max_iterations):
     # Convergenza: verifica cambiamenti rispetto all'iterazione precedente
     if previous_angles is not None:
         angle_diff = np.linalg.norm(np.array(estimated_angles) - np.array(previous_angles))
-        print(f"Differenza tra angoli stimati: {angle_diff}")
+        #print(f"Differenza tra angoli stimati: {angle_diff}")
         if angle_diff < tolerance:
-            print("Convergenza raggiunta.")
+            #print("Convergenza raggiunta.")
             break
 
     # Step 3: Affinamento configurazioni RIS
