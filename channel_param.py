@@ -151,12 +151,14 @@ print("***PERFORM STEP 4***")
 eng = mtlab.start_matlab()
 Theta_G_Ext, pow_Theta_G_Ext = eng.rootmusic(R_Theta_G_SS, 1, nargout=2)
 
+#verifica array equazione (1)
 
 #Perform step 5
 print("***PERFORM STEP 5***")
-R_Phi_F = (1/K)*H_0*H_0.conj().T
+H_1 = H_0.conj().T
+R_Phi_F = (1/K)*H_1*H_1.conj().T
 J = np.fliplr(np.identity(K-L))
-R_Phi_F_SS = calculate_R_SS(R_Theta_G, J, L+1, K-L)
+R_Phi_F_SS = calculate_R_SS(R_Phi_F, J, L+1, K-L)
 
 
 #Perform step 6
