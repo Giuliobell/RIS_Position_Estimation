@@ -10,7 +10,7 @@ Theta_F = 1.1071
 Theta_G = 0.9273
 phi_F = 0.4036
 phi_G = 0.6435
-
+power = 1
 
 #****** DICHIARAZIONE DELLE FUNZIONI ******
 def khatri_rao_prod(A, B):
@@ -45,10 +45,25 @@ def initialize_omega(dim):
         
     return arr.T
     
+def initialize_noise_Matrix(row, column):
+    matr = np.zeros((row, column), dtype=np.complex128)
+    
+    for i in range(row*column):
+        matr[i // column, i % column] = np.random.normal(0,np.sqrt(power), 1)[0]
+    
+    return matr
+
+def initialize_pilotVector_matrix(row, column):
+    matr = np.zeros((row, column), dtype=np.complex128)
+    for i in range(row*column):
+        matr[i // column, i % column] = 1
+    
+    return matr
+
+
 
 #****** PARTE PRINCIPALE DEL CODICE ******
 #++++ Modello di Sistema ++++
-
 #Inizializzazione della Matrice F
 A_N_Theta_F = initialize_A_N_matrix(Theta_F, N, L)
 A_K_phi_F = initialize_A_N_matrix(phi_F, K, L)
@@ -72,6 +87,18 @@ H = G @ Omega @ F
 vec_H = H.ravel(order = 'F')
 vec_H = vec_H.reshape(-1, 1)
 
+#++++ Stima dei Parametri del Canale ++++
+#Calcolo Angoli Esterni
+X = initialize_pilotVector_matrix(K, K)
+N_noise = initialize_noise_Matrix(M,K)
+V = H @ X + N_noise
+
+R_VV = V @ V.conjugate().T
+
+
+
+
+
+
 np.set_printoptions(linewidth=np.inf,  precision=1)
-print(H)
-print(vec_H)
+print(V)
