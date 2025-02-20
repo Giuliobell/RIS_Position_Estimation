@@ -13,6 +13,14 @@ phi_G = 0.6435
 
 
 #****** DICHIARAZIONE DELLE FUNZIONI ******
+def khatri_rao_prod(A, B):
+    if A.shape[1] != B.shape[1]:
+        raise ValueError("Le matrici devono avere lo stesso numero di colonne")
+    
+    # Applica il prodotto di Kronecker colonna per colonna
+    return np.hstack([np.kron(A[:, i], B[:, i]).reshape(-1, 1) for i in range(A.shape[1])])
+
+
 def initialize_A_N_matrix(angle, row, column):
     matr = np.zeros((row, column), dtype=np.complex128)
     
@@ -60,6 +68,10 @@ Omega = np.diag(omega)
 #Costruzione della matrice H
 H = G @ Omega @ F
 
+#Calcolo della vettorizzazione della matrice H
+vec_H = H.ravel(order = 'F')
+vec_H = vec_H.reshape(-1, 1)
 
 np.set_printoptions(linewidth=np.inf,  precision=1)
 print(H)
+print(vec_H)
