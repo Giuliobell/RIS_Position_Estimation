@@ -1,4 +1,5 @@
 import numpy as np
+import matlab.engine
 
 #****** DICHIARAZIONE DELLE COSTANTI ******
 L = 1     #Numero di percorsi
@@ -93,7 +94,11 @@ X = initialize_pilotVector_matrix(K, K)
 N_noise = initialize_noise_Matrix(M,K)
 V = H @ X + N_noise
 
+eng = matlab.engine.start_matlab()
 R_VV = V @ V.conjugate().T
+estimated_angles = eng.pmusic(R_VV, 1, 'corr')  # Output in gradi
+eng.quit()
+
 
 
 
@@ -101,4 +106,18 @@ R_VV = V @ V.conjugate().T
 
 
 np.set_printoptions(linewidth=np.inf,  precision=1)
-print(V)
+import matplotlib.pyplot as plt
+
+# Stampa degli angoli stimati
+print(estimated_angles)
+
+# Plot degli angoli stimati
+#plt.figure()
+#plt.plot(estimated_angles, 'o')
+#plt.title('Angoli Stimati')
+#plt.xlabel('Indice')
+#plt.ylabel('Angolo (gradi)') 
+#plt.grid(True)
+#plt.show()
+
+print(np.max(np.array(estimated_angles)))   
