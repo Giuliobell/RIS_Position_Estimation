@@ -1,5 +1,3 @@
 numpy
 matplotlib
-sympy
-scipy
 matlabengine==24.2.2
