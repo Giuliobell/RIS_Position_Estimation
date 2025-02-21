@@ -11,7 +11,7 @@ Theta_F = 1.1071
 Theta_G = 0.9273
 phi_F = 0.4036
 phi_G = 0.6435
-power = 1
+power = 0
 
 #****** DICHIARAZIONE DELLE FUNZIONI ******
 def khatri_rao_prod(A, B):
@@ -94,22 +94,31 @@ X = initialize_pilotVector_matrix(K, K)
 N_noise = initialize_noise_Matrix(M,K)
 V = H @ X + N_noise
 
+
+
+
+
 eng = matlab.engine.start_matlab()
 R_VV = V @ V.conjugate().T
-estimated_angles = eng.pmusic(R_VV, 1, 'corr')  # Output in gradi
+estimated_angles, pow = eng.rootmusic(R_VV, 1, 'corr', nargout=2)  # Output in gradi
 eng.quit()
 
 
+
+
+#DA FARE: CALCOLO PRECODER E COM
+
+#Calcolo Angoli Interni
 
 
 
 
 
 np.set_printoptions(linewidth=np.inf,  precision=1)
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 # Stampa degli angoli stimati
-print(estimated_angles)
+#print(estimated_angles)
 
 # Plot degli angoli stimati
 #plt.figure()
@@ -120,4 +129,6 @@ print(estimated_angles)
 #plt.grid(True)
 #plt.show()
 
-print(np.max(np.array(estimated_angles)))   
+print(estimated_angles)
+print("------")
+print(pow)   
