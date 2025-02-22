@@ -72,7 +72,7 @@ Gamma_F = initialize_Gamma_Matrix(1, L, L)
 F = A_N_Theta_F @ Gamma_F @ A_K_phi_F.T.conjugate()
 
 #Inizializzazione della Matrice G
-A_M_Theta_G = initialize_A_N_matrix(Theta_F, M, L)
+A_M_Theta_G = initialize_A_N_matrix(Theta_G, M, L)
 A_N_phi_G = initialize_A_N_matrix(phi_G, N, L)
 Gamma_G = initialize_Gamma_Matrix(1, L, L)
 G = A_M_Theta_G @ Gamma_G @ A_N_phi_G.T.conjugate()
@@ -90,45 +90,23 @@ vec_H = vec_H.reshape(-1, 1)
 
 #++++ Stima dei Parametri del Canale ++++
 #Calcolo Angoli Esterni
+#Theta_G
 X = initialize_pilotVector_matrix(K, K)
 N_noise = initialize_noise_Matrix(M,K)
-V = H @ X + N_noise
-
-
-
-
+V = H @ X + N_noise 
 
 eng = matlab.engine.start_matlab()
 R_VV = V @ V.conjugate().T
-estimated_angles, pow = eng.rootmusic(R_VV, 1, 'corr', nargout=2)  # Output in gradi
+estimated_angle, pow = eng.rootmusic(R_VV, 1, 'corr', nargout=2)
+Theta_G_hat = np.arccos(-estimated_angle/np.pi)
+
+#phi_F
+
+
+
+
+
+
+
+print(Theta_G_hat)
 eng.quit()
-
-
-
-
-#DA FARE: CALCOLO PRECODER E COM
-
-#Calcolo Angoli Interni
-
-
-
-
-
-np.set_printoptions(linewidth=np.inf,  precision=1)
-#import matplotlib.pyplot as plt
-
-# Stampa degli angoli stimati
-#print(estimated_angles)
-
-# Plot degli angoli stimati
-#plt.figure()
-#plt.plot(estimated_angles, 'o')
-#plt.title('Angoli Stimati')
-#plt.xlabel('Indice')
-#plt.ylabel('Angolo (gradi)') 
-#plt.grid(True)
-#plt.show()
-
-print(estimated_angles)
-print("------")
-print(pow)   
