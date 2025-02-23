@@ -21,7 +21,6 @@ def khatri_rao_prod(A, B):
     # Applica il prodotto di Kronecker colonna per colonna
     return np.hstack([np.kron(A[:, i], B[:, i]).reshape(-1, 1) for i in range(A.shape[1])])
 
-
 def initialize_A_N_matrix(angle, row, column):
     matr = np.zeros((row, column), dtype=np.complex128)
     
@@ -84,16 +83,12 @@ Omega = np.diag(omega)
 #Costruzione della matrice H
 H = G @ Omega @ F
 
-#Calcolo della vettorizzazione della matrice H
-vec_H = H.ravel(order = 'F')
-vec_H = vec_H.reshape(-1, 1)
-
 #++++ Stima dei Parametri del Canale ++++
 #Calcolo Angoli Esterni
 #Theta_G
 X = initialize_pilotVector_matrix(K, K)
 N_noise = initialize_noise_Matrix(M,K)
-V = H @ X + N_noise 
+V = H + N_noise 
 
 eng = matlab.engine.start_matlab()
 R_VV = V @ V.conjugate().T
@@ -101,12 +96,18 @@ estimated_angle, pow = eng.rootmusic(R_VV, 1, 'corr', nargout=2)
 Theta_G_hat = np.arccos(-estimated_angle/np.pi)
 
 #phi_F
+R_HH = V.conj().T @ V
+estim_2, pow = eng.rootmusic(R_HH, 1, 'corr', nargout=2)
+phi_F_hat = np.arccos(-estim_2/np.pi)
 
-
-
-
-
-
-
-print(Theta_G_hat)
 eng.quit()
+
+#Precoder e Combiner
+P = initialize_A_N_matrix(phi_F_hat, K, L)
+Q = initialize_A_N_matrix(Theta_G_hat, M, L)
+
+#Calcolo Angoli Interni
+
+
+print("Theta_G_hat: ", Theta_G_hat)
+print("phi_F_hat: ", phi_F_hat)
