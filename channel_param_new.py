@@ -53,13 +53,6 @@ def initialize_noise_Matrix(row, column):
     
     return matr
 
-def initialize_pilotVector_matrix(row, column):
-    matr = np.zeros((row, column), dtype=np.complex128)
-    for i in range(row*column):
-        matr[i // column, i % column] = 1
-    
-    return matr
-
 
 
 #****** PARTE PRINCIPALE DEL CODICE ******
