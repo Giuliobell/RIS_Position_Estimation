@@ -149,10 +149,10 @@ class MBCEAlgorithm:
         #Stima angoli interni
         estim_3, pow = self.eng.rootmusic(R_ZZ, 1, 'corr', nargout=2)
 
-        phi_G, Theta_F = self.estract_angles(np.cos(abs(estim_3)))
+        phi_G_hat, Theta_F_hat = self.estract_angles(np.cos(abs(estim_3)))
 
         self.eng.quit()
         
-        return Theta_G_hat, phi_F_hat, phi_G, Theta_F
+        return Theta_G_hat, phi_F_hat, phi_G_hat, Theta_F_hat
 
 #valore reale di psi = 1.210294875

@@ -1,4 +1,5 @@
 from Algorithms.angle_estimation_algorithms import MBCEAlgorithm
+from tabulate import tabulate
 
 #****** DICHIARAZIONE DELLE COSTANTI ******
 L = 1     #Numero di percorsi
@@ -14,7 +15,19 @@ phi_G = 0.6435
 power = 0
 
 mbce = MBCEAlgorithm(L, N, M, K, D)
-Theta_G_hat, phi_F_hat, phi_G, Theta_F = mbce.run(Theta_F, Theta_G, phi_F, phi_G, power)
+Theta_G_hat, phi_F_hat, phi_G_hat, Theta_F_hat = mbce.run(Theta_F, Theta_G, phi_F, phi_G, power)
 
 # Stampa i risultati
-print(f"Theta_G_hat: {Theta_G_hat}, phi_F_hat: {phi_F_hat}, phi_G: {phi_G}, Theta_F: {Theta_F}")
+print("Valori Ottenuti")
+print(tabulate([["Theta_G", Theta_G, Theta_G_hat],
+                ["phi_F", phi_F, phi_F_hat],
+                ["phi_G", phi_G, phi_G_hat],
+                ["Theta_F", Theta_F, Theta_F_hat]],
+                headers=[" ", "Valore Reale", "Valore Stimato"], tablefmt="pretty"))
+
+print("Errori Percentuali")
+print(tabulate([["Theta_G", abs(Theta_G - Theta_G_hat) / Theta_G * 100],
+                ["phi_F", abs(phi_F - phi_F_hat) / phi_F * 100],
+                ["phi_G", abs(phi_G - phi_G_hat) / phi_G * 100],
+                ["Theta_F", abs(Theta_F - Theta_F_hat) / Theta_F * 100]],
+                headers=["Angolo", "Errore Percentuale"], tablefmt="pretty"))
