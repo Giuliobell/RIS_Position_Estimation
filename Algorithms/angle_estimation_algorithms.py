@@ -60,7 +60,7 @@ class MBCEAlgorithm:
         return matr
 
     def __dft_matrix(self, N):
-        """Crea una matrice DFT di dimensione NxN."""
+        #Crea una matrice DFT di dimensione NxN.
         n = np.arange(N)
         k = n.reshape((N, 1))
         omega = (1/np.sqrt(N)) * np.exp(-2j * np.pi * k * n / N)
@@ -97,19 +97,19 @@ class MBCEAlgorithm:
 
         #++++ Modello di Sistema ++++
         #Inizializzazione della Matrice F
-        A_N_Theta_F = self.initialize_A_N_matrix(Theta_F, self.N, self.L)
-        A_K_phi_F = self.initialize_A_N_matrix(phi_F, self.K, self.L)
-        Gamma_F = self.initialize_Gamma_Matrix(1, self.L, self.L)
+        A_N_Theta_F = self.__initialize_A_N_matrix(Theta_F, self.N, self.L)
+        A_K_phi_F = self.__initialize_A_N_matrix(phi_F, self.K, self.L)
+        Gamma_F = self.__initialize_Gamma_Matrix(1, self.L, self.L)
         F = A_N_Theta_F @ Gamma_F @ A_K_phi_F.T.conjugate()
 
         #Inizializzazione della Matrice G
-        A_M_Theta_G = self.initialize_A_N_matrix(Theta_G, self.M, self.L)
-        A_N_phi_G = self.initialize_A_N_matrix(phi_G, self.N, self.L)
-        Gamma_G = self.initialize_Gamma_Matrix(1, self.L, self.L)
+        A_M_Theta_G = self.__initialize_A_N_matrix(Theta_G, self.M, self.L)
+        A_N_phi_G = self.__initialize_A_N_matrix(phi_G, self.N, self.L)
+        Gamma_G = self.__initialize_Gamma_Matrix(1, self.L, self.L)
         G = A_M_Theta_G @ Gamma_G @ A_N_phi_G.T.conjugate()
 
         #Costruione della Matrice Omega
-        omega = self.initialize_omega(self.N)
+        omega = self.__initialize_omega(self.N)
         Omega = np.diag(omega)
 
         #Costruzione della matrice H
@@ -118,7 +118,7 @@ class MBCEAlgorithm:
         #++++ Stima dei Parametri del Canale ++++
         #Calcolo Angoli Esterni
         #Theta_G
-        N_noise = self.initialize_noise_Matrix(self.M,self.K, power)
+        N_noise = self.__initialize_noise_Matrix(self.M,self.K, power)
         V = H + N_noise 
 
         R_VV = V @ V.conjugate().T
@@ -132,20 +132,20 @@ class MBCEAlgorithm:
 
 
         #Precoder e Combiner
-        P = self.initialize_A_N_matrix(phi_F_hat, self.K, self.L)
-        W = self.initialize_A_N_matrix(Theta_G_hat, self.M, self.L)
+        P = self.__initialize_A_N_matrix(phi_F_hat, self.K, self.L)
+        W = self.__initialize_A_N_matrix(Theta_G_hat, self.M, self.L)
 
         #Calcolo Angoli Interni
-        Theta = self.dft_matrix(self.D)
-        K = self.initialize_K_Matrix(self.D,self.N, Theta)
+        Theta = self.__dft_matrix(self.D)
+        K = self.__initialize_K_Matrix(self.D,self.N, Theta)
 
         Gamma = np.kron(Gamma_F,Gamma_G)
-        A_N_psi = self.khatri_rao_prod(A_N_Theta_F.conj().T, A_N_phi_G.T)
+        A_N_psi = self.__khatri_rao_prod(A_N_Theta_F.conj().T, A_N_phi_G.T)
         A_N_psi = A_N_psi.T
 
         Z = np.kron(P.T@A_K_phi_F.conj(), (W.conj().T@A_M_Theta_G)@Gamma@A_N_psi.conj().T)
 
-        N_noise_primo = self.initialize_noise_Matrix(self.L*self.L,self.D, power)
+        N_noise_primo = self.__initialize_noise_Matrix(self.L*self.L,self.D, power)
 
         Y = Z@K +N_noise_primo
 
@@ -155,10 +155,8 @@ class MBCEAlgorithm:
         #Stima angoli interni
         estim_3, pow = self.eng.rootmusic(R_ZZ, 1, 'corr', nargout=2)
 
-        phi_G_hat, Theta_F_hat = self.estract_angles(np.cos(abs(estim_3)))
+        phi_G_hat, Theta_F_hat = self.__estract_angles(np.cos(abs(estim_3)))
 
         self.eng.quit()
         
         return Theta_G_hat, phi_F_hat, phi_G_hat, Theta_F_hat
-
-#valore reale di psi = 1.210294875
