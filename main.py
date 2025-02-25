@@ -1,5 +1,6 @@
 from Algorithms.angle_estimation_algorithms import MBCEAlgorithm
 from Algorithms.localization_algorithms import localization_algorithms
+import auxiliary_functions.error_calculation as err_calc
 from tabulate import tabulate
 import numpy as np
 
@@ -17,24 +18,24 @@ phi_G = 0.6435
 power = 0
 
 #Stima angoli
-#mbce = MBCEAlgorithm(L, N, M, K, D)
-#Theta_G_hat, phi_F_hat, phi_G_hat, Theta_F_hat = mbce.run(Theta_F, Theta_G, phi_F, phi_G, power)
-#
-#
-## Stampa i risultati
-#print("Valori Ottenuti")
-#print(tabulate([["Theta_G", Theta_G, Theta_G_hat],
-#                ["phi_F", phi_F, phi_F_hat],
-#                ["phi_G", phi_G, phi_G_hat],
-#                ["Theta_F", Theta_F, Theta_F_hat]],
-#                headers=[" ", "Valore Reale", "Valore Stimato"], tablefmt="pretty"))
-#
-#print("Errori Percentuali")
-#print(tabulate([["Theta_G", abs(Theta_G - Theta_G_hat) / Theta_G * 100],
-#                ["phi_F", abs(phi_F - phi_F_hat) / phi_F * 100],
-#                ["phi_G", abs(phi_G - phi_G_hat) / phi_G * 100],
-#                ["Theta_F", abs(Theta_F - Theta_F_hat) / Theta_F * 100]],
-#                headers=["Angolo", "Errore Percentuale"], tablefmt="pretty"))
+mbce = MBCEAlgorithm(L, N, M, K, D)
+Theta_G_hat, phi_F_hat, phi_G_hat, Theta_F_hat = mbce.run(Theta_F, Theta_G, phi_F, phi_G, power)
+
+
+# Stampa i risultati
+print("Valori Ottenuti")
+print(tabulate([["Theta_G", Theta_G, Theta_G_hat],
+                ["phi_F", phi_F, phi_F_hat],
+                ["phi_G", phi_G, phi_G_hat],
+                ["Theta_F", Theta_F, Theta_F_hat]],
+                headers=[" ", "Valore Reale", "Valore Stimato"], tablefmt="pretty"))
+
+print("Errori Percentuali")
+print(tabulate([["Theta_G", err_calc.percentage_error(Theta_G, Theta_G_hat)],
+                ["phi_F", err_calc.percentage_error(phi_F, phi_F_hat)],
+                ["phi_G", err_calc.percentage_error(phi_G, phi_G_hat)],
+                ["Theta_F", err_calc.percentage_error(Theta_F, Theta_F_hat)]],
+                headers=["Angolo", "Errore Percentuale"], tablefmt="pretty"))
 
 
 
@@ -52,12 +53,18 @@ RIS_Rotation = 3/2*np.pi
 
 #Stima della posizione
 loc = localization_algorithms(c)
-#p, alpha = loc.los_path_estimation(r, Theta_F_hat, phi_F_hat, tau_0)
-p, alpha = loc.los_path_estimation(r, RIS_Rotation + Theta_F, phi_F, tau_0)
+#p_hat, alpha = loc.los_path_estimation(r, Theta_F_hat, phi_F_hat, tau_0)
+p_hat, alpha = loc.los_path_estimation(r, RIS_Rotation + Theta_F, phi_F, tau_0)
 
-print("Posizione UE stimata (LOS):", p)
-print(alpha)
-
+print("Valori Ottenuti")
+print(tabulate([["Posizione UE (X)", p[0], p_hat[0]],
+                ["Posizione UE (Y)", p[1], p_hat[1]],
+                ["Angolo alpha", "", alpha]],
+                headers=["Valore Reale", "Valore Stimato"], tablefmt="pretty"))
+print("Errori Percentuali")
+print(tabulate([["Posizione UE (X)", err_calc.percentage_error(p[0], p_hat[0])],
+                ["Posizione UE (Y)", err_calc.percentage_error(p[1], p_hat[1])]],
+                headers=["Componente", "Errore Percentuale"], tablefmt="pretty"))
 
 
 
