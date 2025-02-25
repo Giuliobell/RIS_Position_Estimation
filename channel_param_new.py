@@ -139,7 +139,9 @@ A_N_psi = A_N_psi.T
 
 Z = np.kron(P.T@A_K_phi_F.conj(), (W.conj().T@A_M_Theta_G)@Gamma@A_N_psi.conj().T)
 
-Y = Z@K #+N
+N_noise_primo = initialize_noise_Matrix(L*L,D)
+
+Y = Z@K +N_noise_primo
 
 Z_hat = (1/D) * Y @ Theta.conj().T
 R_ZZ = Z_hat.conj().T@Z_hat
@@ -154,11 +156,9 @@ if phi_G is not None and Theta_F is not None:
 else:
     print("Non è stato possibile trovare una combinazione di angoli che soddisfi l'equazione.")
 
-
-
 print("Theta_G_hat: ", Theta_G_hat)
 print("phi_F_hat: ", phi_F_hat)
 eng.quit()
 
 
-#Vettore angoli interni = 1.210294875
+#valore reale di psi = 1.210294875
