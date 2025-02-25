@@ -1,4 +1,4 @@
-from angle_estimation_algorithms import MBCEAlgorithm
+from Algorithms.angle_estimation_algorithms import MBCEAlgorithm
 
 #****** DICHIARAZIONE DELLE COSTANTI ******
 L = 1     #Numero di percorsi
