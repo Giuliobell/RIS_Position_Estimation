@@ -2,6 +2,12 @@ import numpy as np
 import matlab.engine
 
 
+__L = None
+__N = None
+__M = None
+__K = None
+__D = None
+
 class MBCEAlgorithm:
     def __init__(self, L, N, M, K, D):
         self.L = L
@@ -14,14 +20,14 @@ class MBCEAlgorithm:
 
 
     #****** DICHIARAZIONE DELLE FUNZIONI ******
-    def khatri_rao_prod(self, A, B):
+    def __khatri_rao_prod(self, A, B):
         if A.shape[1] != B.shape[1]:
             raise ValueError("Le matrici devono avere lo stesso numero di colonne")
     
         # Applica il prodotto di Kronecker colonna per colonna
         return np.hstack([np.kron(A[:, i], B[:, i]).reshape(-1, 1) for i in range(A.shape[1])])
 
-    def initialize_A_N_matrix(self, angle, row, column):  
+    def __initialize_A_N_matrix(self, angle, row, column):  
         matr = np.zeros((row, column), dtype=np.complex128)
     
         for i in range(row*column):
@@ -29,7 +35,7 @@ class MBCEAlgorithm:
     
         return matr
 
-    def initialize_Gamma_Matrix(self, gain, row, column):
+    def __initialize_Gamma_Matrix(self, gain, row, column):
         matr = np.zeros((row, column), dtype=np.complex128)
     
         for i in range(row):
@@ -37,7 +43,7 @@ class MBCEAlgorithm:
     
         return matr
 
-    def initialize_omega(self, dim):
+    def __initialize_omega(self, dim):
         arr = np.zeros(dim, dtype=np.complex128)
     
         for i in range(dim):
@@ -45,7 +51,7 @@ class MBCEAlgorithm:
         
         return arr.T
     
-    def initialize_noise_Matrix(self, row, column, power):
+    def __initialize_noise_Matrix(self, row, column, power):
         matr = np.zeros((row, column), dtype=np.complex128)
     
         for i in range(row*column):
@@ -53,21 +59,21 @@ class MBCEAlgorithm:
     
         return matr
 
-    def dft_matrix(self, N):
+    def __dft_matrix(self, N):
         """Crea una matrice DFT di dimensione NxN."""
         n = np.arange(N)
         k = n.reshape((N, 1))
         omega = (1/np.sqrt(N)) * np.exp(-2j * np.pi * k * n / N)
         return omega
 
-    def initialize_K_Matrix(self, D,N, Theta):
+    def __initialize_K_Matrix(self, D,N, Theta):
         matr = np.zeros((N,D), dtype=np.complex128)
     
         matr[0:D, 0:D] = Theta
     
         return matr
 
-    def estract_angles(self, cos_estim):
+    def __estract_angles(self, cos_estim):
         # Assumendo che gli angoli di RIS siano compresi nell'intevallo  [30°,150°]
         start_angle = np.pi / 6
         end_angle = 5 * np.pi / 6

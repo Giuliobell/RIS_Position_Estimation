@@ -17,6 +17,7 @@ power = 0
 mbce = MBCEAlgorithm(L, N, M, K, D)
 Theta_G_hat, phi_F_hat, phi_G_hat, Theta_F_hat = mbce.run(Theta_F, Theta_G, phi_F, phi_G, power)
 
+
 # Stampa i risultati
 print("Valori Ottenuti")
 print(tabulate([["Theta_G", Theta_G, Theta_G_hat],
