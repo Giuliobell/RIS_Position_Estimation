@@ -18,29 +18,6 @@ phi_F = 0.4036
 phi_G = 0.6435
 power = 0
 
-#Stima angoli
-mbce = MBCEAlgorithm(L, N, M, K, D)
-Theta_G_hat, phi_F_hat, phi_G_hat, Theta_F_hat = mbce.run(Theta_F, Theta_G, phi_F, phi_G, power)
-
-
-# Stampa i risultati
-print("Valori Ottenuti")
-print(tabulate([["Theta_G", Theta_G, Theta_G_hat],
-                ["phi_F", phi_F, phi_F_hat],
-                ["phi_G", phi_G, phi_G_hat],
-                ["Theta_F", Theta_F, Theta_F_hat]],
-                headers=[" ", "Valore Reale", "Valore Stimato"], tablefmt="pretty"))
-
-print("Errori Percentuali")
-print(tabulate([["Theta_G", err_calc.percentage_error(Theta_G, Theta_G_hat)],
-                ["phi_F", err_calc.percentage_error(phi_F, phi_F_hat)],
-                ["phi_G", err_calc.percentage_error(phi_G, phi_G_hat)],
-                ["Theta_F", err_calc.percentage_error(Theta_F, Theta_F_hat)]],
-                headers=["Angolo", "Errore Percentuale"], tablefmt="pretty"))
-
-
-
-#*****************************************STIMA DELLA POSIZIONE*****************************************
 c = 299792458           # Velocità della luce
 q = np.array([0, 0])    # Posizione BS
 r = np.array([30, 40])  # Posizione RIS
@@ -50,29 +27,57 @@ tau_0 = 1.49174e-7      #Distanza RIS-UE nel caso LOS
 
 RIS_Rotation = 3/2*np.pi
 
+iteration_params_extimated = []
+iteration_params_extimated_error = []
 
 
-#Stima della posizione
-loc = localization_algorithms(c)
-p_hat_estim_angle, alpha_estim_angle = loc.los_path_estimation(r, RIS_Rotation + Theta_F_hat, phi_F_hat, tau_0)
-p_hat, alpha = loc.los_path_estimation(r, RIS_Rotation + Theta_F, phi_F, tau_0)
+dB_values = np.linspace(-30, 0, 10)  # 10 valori tra -30dB e 0dB
 
-print("Valori Ottenuti")
-print(tabulate([["Posizione UE (X) (angoli reali)", p[0], p_hat[0]],
-                ["Posizione UE (Y) (angoli reali)", p[1], p_hat[1]],
-                ["Posizione UE (X) (angoli stimati)", p[0], p_hat_estim_angle[0]],
-                ["Posizione UE (Y) (angoli stimati)", p[1], p_hat_estim_angle[1]],
-                ["Angolo alpha angoli reali", "", RIS_Rotation + alpha],
-                ["Angolo alpha angoli stimati", "", RIS_Rotation + alpha_estim_angle]],
-                headers=["Valore Reale", "Valore Stimato"], tablefmt="pretty"))
-print("Errori Percentuali")
-print(tabulate([["Posizione UE (X) (angoli reali)", err_calc.percentage_error(p[0], p_hat[0])],
-                ["Posizione UE (Y) (angoli reali)", err_calc.percentage_error(p[1], p_hat[1])],
-                ["Posizione UE (X) (angoli stimati)", err_calc.percentage_error(p[0], p_hat_estim_angle[0])],
-                ["Posizione UE (Y) (angoli stimati)", err_calc.percentage_error(p[1], p_hat_estim_angle[1])]],
-                headers=["Componente", "Errore Percentuale"], tablefmt="pretty"))
+for val in dB_values:
+#Stima angoli
+    mbce = MBCEAlgorithm(L, N, M, K, D)
+    Theta_G_hat, phi_F_hat, phi_G_hat, Theta_F_hat = mbce.run(Theta_F, Theta_G, phi_F, phi_G, 10**(val/10))
 
+    loc = localization_algorithms(c)
+    p_hat, alpha_hat = loc.los_path_estimation(r, RIS_Rotation + Theta_F_hat, phi_F_hat, tau_0)
+    #p_hat, alpha = loc.los_path_estimation(r, RIS_Rotation + Theta_F, phi_F, tau_0)
+    
+    iteration_params_extimated.append([val, Theta_G_hat, phi_F_hat, phi_G_hat, Theta_F_hat, p_hat, alpha_hat])
+    iteration_params_extimated_error.append([val, err_calc.percentage_error(Theta_G, Theta_G_hat), err_calc.percentage_error(phi_F, phi_F_hat), err_calc.percentage_error(phi_G, phi_G_hat), err_calc.percentage_error(Theta_F, Theta_F_hat), err_calc.percentage_error(p[0], p_hat[0]), err_calc.percentage_error(p[1], p_hat[1])])
 
-if input("Stampare i grafici [Y/N]: ") == "Y":
-    plot.plot_graph(q, r, p_hat_estim_angle, RIS_Rotation + alpha_estim_angle, Theta_F_hat, phi_F_hat, "Posizione Stimata Angoli Stimati")
+print(tabulate(iteration_params_extimated, headers=["SNR", "Theta_G_hat", "phi_F_hat", "phi_G_hat", "Theta_F_hat", "p_hat", "alpha_hat"] ,tablefmt="pretty"))
+print(tabulate(iteration_params_extimated_error, headers=["SNR", "Theta_G_error", "phi_F_error", "phi_G_error", "Theta_F_error", "p_x_error", "p_y_error"], tablefmt="pretty"))
 
+# Stampa i risultati
+#print("Valori Ottenuti")
+#print(tabulate([["Theta_G", Theta_G, Theta_G_hat],
+#                ["phi_F", phi_F, phi_F_hat],
+#                ["phi_G", phi_G, phi_G_hat],
+#                ["Theta_F", Theta_F, Theta_F_hat]],
+#                headers=[" ", "Valore Reale", "Valore Stimato"], tablefmt="pretty"))
+#
+#print("Errori Percentuali")
+#print(tabulate([["Theta_G", err_calc.percentage_error(Theta_G, Theta_G_hat)],
+#                ["phi_F", err_calc.percentage_error(phi_F, phi_F_hat)],
+#                ["phi_G", err_calc.percentage_error(phi_G, phi_G_hat)],
+#                ["Theta_F", err_calc.percentage_error(Theta_F, Theta_F_hat)]],
+#                headers=["Angolo", "Errore Percentuale"], tablefmt="pretty"))
+#
+#print("Valori Ottenuti")
+#print(tabulate([["Posizione UE (X) (angoli reali)", p[0], p_hat[0]],
+#                ["Posizione UE (Y) (angoli reali)", p[1], p_hat[1]],
+#                ["Posizione UE (X) (angoli stimati)", p[0], p_hat_estim_angle[0]],
+#                ["Posizione UE (Y) (angoli stimati)", p[1], p_hat_estim_angle[1]],
+#                ["Angolo alpha angoli reali", "", RIS_Rotation + alpha],
+#                ["Angolo alpha angoli stimati", "", RIS_Rotation + alpha_estim_angle]],
+#                headers=["Valore Reale", "Valore Stimato"], tablefmt="pretty"))
+#print("Errori Percentuali")
+#print(tabulate([["Posizione UE (X) (angoli reali)", err_calc.percentage_error(p[0], p_hat[0])],
+#                ["Posizione UE (Y) (angoli reali)", err_calc.percentage_error(p[1], p_hat[1])],
+#                ["Posizione UE (X) (angoli stimati)", err_calc.percentage_error(p[0], p_hat_estim_angle[0])],
+#                ["Posizione UE (Y) (angoli stimati)", err_calc.percentage_error(p[1], p_hat_estim_angle[1])]],
+#                headers=["Componente", "Errore Percentuale"], tablefmt="pretty"))
+#
+
+#if input("Stampare i grafici [Y/N]: ") == "Y":
+#    plot.plot_graph(q, r, p_hat_estim_angle, RIS_Rotation + alpha_estim_angle, Theta_F_hat, phi_F_hat, "Posizione Stimata Angoli Stimati")

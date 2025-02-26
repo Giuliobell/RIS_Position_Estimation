@@ -55,7 +55,7 @@ class MBCEAlgorithm:
         matr = np.zeros((row, column), dtype=np.complex128)
     
         for i in range(row*column):
-            matr[i // column, i % column] = np.random.normal(0,np.sqrt(power), 1)[0]
+            matr[i // column, i % column] = np.random.normal(0,power, 1)[0]
     
         return matr
 
