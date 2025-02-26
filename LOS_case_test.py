@@ -75,7 +75,4 @@ print(tabulate([["Posizione UE (X) (angoli reali)", err_calc.percentage_error(p[
 
 if input("Stampare i grafici [Y/N]: ") == "Y":
     plot.plot_graph(q, r, p_hat_estim_angle, RIS_Rotation + alpha_estim_angle, Theta_F_hat, phi_F_hat, "Posizione Stimata Angoli Stimati")
-    plot.plot_graph(q, r, p_hat, RIS_Rotation + alpha, Theta_F, phi_F, "Posizione Stimata Angoli Reali")
-    plot.plot_graph(q, r, p, RIS_Rotation, Theta_F, phi_F, "Posizione Reale")
-    input()
 

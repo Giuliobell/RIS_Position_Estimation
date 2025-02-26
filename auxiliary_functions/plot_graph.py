@@ -71,4 +71,5 @@ def plot_graph(q, r, p, alpha, Theta_F_LOS, phi_F_LOS, graph_title, s = None):
     ax.axvline(0, color='black', linewidth=0.5)
     ax.grid(color='gray', linestyle='--', linewidth=0.5)
     ax.legend()
-    plt.show(block=False)
+    #plt.show(block=False)
+    plt.show()
