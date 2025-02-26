@@ -54,60 +54,28 @@ RIS_Rotation = 3/2*np.pi
 
 #Stima della posizione
 loc = localization_algorithms(c)
-#p_hat, alpha = loc.los_path_estimation(r, Theta_F_hat, phi_F_hat, tau_0)
+p_hat_estim_angle, alpha_estim_angle = loc.los_path_estimation(r, RIS_Rotation + Theta_F_hat, phi_F_hat, tau_0)
 p_hat, alpha = loc.los_path_estimation(r, RIS_Rotation + Theta_F, phi_F, tau_0)
 
 print("Valori Ottenuti")
-print(tabulate([["Posizione UE (X)", p[0], p_hat[0]],
-                ["Posizione UE (Y)", p[1], p_hat[1]],
-                ["Angolo alpha", "", RIS_Rotation + alpha]],
+print(tabulate([["Posizione UE (X) (angoli reali)", p[0], p_hat[0]],
+                ["Posizione UE (Y) (angoli reali)", p[1], p_hat[1]],
+                ["Posizione UE (X) (angoli stimati)", p[0], p_hat_estim_angle[0]],
+                ["Posizione UE (Y) (angoli stimati)", p[1], p_hat_estim_angle[1]],
+                ["Angolo alpha angoli reali", "", RIS_Rotation + alpha],
+                ["Angolo alpha angoli stimati", "", RIS_Rotation + alpha_estim_angle]],
                 headers=["Valore Reale", "Valore Stimato"], tablefmt="pretty"))
 print("Errori Percentuali")
-print(tabulate([["Posizione UE (X)", err_calc.percentage_error(p[0], p_hat[0])],
-                ["Posizione UE (Y)", err_calc.percentage_error(p[1], p_hat[1])]],
+print(tabulate([["Posizione UE (X) (angoli reali)", err_calc.percentage_error(p[0], p_hat[0])],
+                ["Posizione UE (Y) (angoli reali)", err_calc.percentage_error(p[1], p_hat[1])],
+                ["Posizione UE (X) (angoli stimati)", err_calc.percentage_error(p[0], p_hat_estim_angle[0])],
+                ["Posizione UE (Y) (angoli stimati)", err_calc.percentage_error(p[1], p_hat_estim_angle[1])]],
                 headers=["Componente", "Errore Percentuale"], tablefmt="pretty"))
 
 
 if input("Stampare i grafici [Y/N]: ") == "Y":
-    plot.plot_graph(q, r, p_hat, RIS_Rotation + alpha, Theta_F, phi_F)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    plot.plot_graph(q, r, p_hat_estim_angle, RIS_Rotation + alpha_estim_angle, Theta_F_hat, phi_F_hat, "Posizione Stimata Angoli Stimati")
+    plot.plot_graph(q, r, p_hat, RIS_Rotation + alpha, Theta_F, phi_F, "Posizione Stimata Angoli Reali")
+    plot.plot_graph(q, r, p, RIS_Rotation, Theta_F, phi_F, "Posizione Reale")
+    input()
 

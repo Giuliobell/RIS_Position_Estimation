@@ -24,12 +24,7 @@ def rotate_rectangle(center, width, height, angle):
     rotated_rect = np.dot(rect, rotation_matrix.T) + center
     return rotated_rect
 
-#*****************************************************COPISCI COME FUNZIONANO GLI ANGOLI**********************************
-
-def plot_graph(q, r, p, alpha, Theta_F_LOS, phi_F_LOS, s_1x = 0, s_1y = 0):
-    print(f"Posizione UE: {p}")
-    print(f"Rotazione UE: {np.degrees(alpha)}")
-
+def plot_graph(q, r, p, alpha, Theta_F_LOS, phi_F_LOS, graph_title, s = None):
     # --- Plot Setup ---
     fig, ax = plt.subplots(figsize=(8, 8))
 
@@ -51,9 +46,7 @@ def plot_graph(q, r, p, alpha, Theta_F_LOS, phi_F_LOS, s_1x = 0, s_1y = 0):
     ax.scatter(*r, color='green')
     ax.scatter(*p, color='red')
 
-    if s_1x != 0:
-        s = np.array([s_1x, s_1y])
-        print(f"Posizione scatter: [{s_1x, s_1y}]")
+    if s is not None:
         scatter_rect = rotate_rectangle(s, 2, 2, 0)
         scatter_polygon = Polygon(scatter_rect, closed=True, color='yellow', alpha=0.5, label='Scatter')
         ax.add_patch(scatter_polygon)
@@ -62,9 +55,9 @@ def plot_graph(q, r, p, alpha, Theta_F_LOS, phi_F_LOS, s_1x = 0, s_1y = 0):
         ax.plot([s[0], p[0]], [s[1], p[1]], linestyle='--', color='purple', label="Scatter to UE")
         ax.plot([r[0], p[0]], [r[1], p[1]], linestyle='--', color='orange', label="RIS to UE")
         
-        ax.set_title("Canale di Comunicazione con RIS - Caso NLOS")
+        ax.set_title("Canale di Comunicazione con RIS - Caso NLOS "+graph_title)
     else:    
-        ax.set_title("Canale di Comunicazione con RIS - Caso LOS")
+        ax.set_title("Canale di Comunicazione con RIS - Caso LOS "+graph_title)
         # Connect points with lines
         ax.plot([r[0], p[0]], [r[1], p[1]], linestyle='--', color='green', label="RIS to UE")
 
@@ -78,4 +71,4 @@ def plot_graph(q, r, p, alpha, Theta_F_LOS, phi_F_LOS, s_1x = 0, s_1y = 0):
     ax.axvline(0, color='black', linewidth=0.5)
     ax.grid(color='gray', linestyle='--', linewidth=0.5)
     ax.legend()
-    plt.show()
+    plt.show(block=False)

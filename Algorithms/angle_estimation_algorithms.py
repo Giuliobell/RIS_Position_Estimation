@@ -82,8 +82,8 @@ class MBCEAlgorithm:
         best_Theta_F = None
         min_diff = float('inf')
     
-        for phi_G in np.linspace(start_angle, end_angle, 5000):
-            for Theta_F in np.linspace(start_angle, end_angle, 5000):
+        for phi_G in np.linspace(start_angle, end_angle, 500):
+            for Theta_F in np.linspace(start_angle, end_angle, 500):
                 diff = abs(np.cos(phi_G) - np.cos(Theta_F) - cos_estim)
                 if diff < min_diff:
                     min_diff = diff
@@ -151,6 +151,19 @@ class MBCEAlgorithm:
 
         Z_hat = (1/self.D) * Y @ Theta.conj().T
         R_ZZ = Z_hat.conj().T@Z_hat
+
+        #B_phi_F_Theta_G = np.kron(A_K_phi_F.conj(),A_M_Theta_G)
+        
+        #A_N_psi = self.__khatri_rao_prod(A_N_Theta_F.conj().T, A_N_phi_G.T).T
+
+        #Gamma = np.kron(Gamma_F,Gamma_G)
+        
+        #N_noise_primo = self.__initialize_noise_Matrix(self.M*self.K,self.N, power)
+        
+        #E = B_phi_F_Theta_G @ Gamma @ A_N_psi.conj().T + N_noise_primo
+        #E = self.__khatri_rao_prod(F.T, G)
+        
+        #R_ZZ = E.conj().T @ E
 
         #Stima angoli interni
         estim_3, pow = self.eng.rootmusic(R_ZZ, 1, 'corr', nargout=2)
