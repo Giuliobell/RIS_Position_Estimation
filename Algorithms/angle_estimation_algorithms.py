@@ -15,7 +15,6 @@ class MBCEAlgorithm:
         self.M = M
         self.K = K
         self.D = D
-        self.eng = matlab.engine.start_matlab()
 
 
 
@@ -94,6 +93,8 @@ class MBCEAlgorithm:
 
 #****** PARTE PRINCIPALE DEL CODICE ******
     def run(self, Theta_F, Theta_G, phi_F, phi_G, power):
+
+        self.eng = matlab.engine.start_matlab()
 
         #++++ Modello di Sistema ++++
         #Inizializzazione della Matrice F
